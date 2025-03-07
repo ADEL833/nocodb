@@ -1132,7 +1132,8 @@
     "autoCreateMissingSelectionOptions": "Auto create missing select field options",
     "fillForm": "Fill Form",
     "proceedToLink": "Proceed to link",
-    "displayTimezone": "Display time zone"
+    "displayTimezone": "Display time zone",
+    "useSameTimezoneForAllMembers": "Use same timezone for all members"
   },
   "activity": {
     "clickToResolve": "Click to resolve",
