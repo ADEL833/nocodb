@@ -27,11 +27,8 @@ RUN npm install -g pnpm@8.6.0
 RUN echo "node-version=18.19.1" > .npmrc && \
     echo "engine-strict=false" >> .npmrc
 
-# Install dependencies using pnpm with specific flags
-RUN pnpm install --no-frozen-lockfile --ignore-scripts
-
-# Build the application
-RUN pnpm build
+# Bootstrap the project (install dependencies and build packages)
+RUN pnpm bootstrap
 
 # Set NocoDB environment variables
 ENV NC_DB=${APP_DB} \
@@ -47,5 +44,5 @@ EXPOSE 8080
 # Create volume mount point
 VOLUME /usr/app/data
 
-# Start NocoDB
-CMD ["pnpm", "start"]
+# Start NocoDB using the correct script from package.json
+CMD ["pnpm", "start:backend"]
