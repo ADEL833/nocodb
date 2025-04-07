@@ -11,16 +11,19 @@ RUN apk add --no-cache \
     g++ \
     git
 
+# Install pnpm globally
+RUN npm install -g pnpm
+
 # Copy all files from your repository to the container
 COPY . .
 
-# Install dependencies
-RUN npm install
+# Install dependencies using pnpm
+RUN pnpm install
 
 # Build the application (if required)
-RUN npm run build
+RUN pnpm build
 
-# Set environment variables
+# Set environment variables using external variables
 ENV NC_DB=${APP_DB} \
     NC_PUBLIC_URL=${APP_URL} \
     NC_AUTH_JWT_SECRET=${APP_AUTH_JWT_SECRET}
@@ -35,4 +38,4 @@ EXPOSE 8080
 VOLUME /usr/app/data
 
 # Start NocoDB
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]
