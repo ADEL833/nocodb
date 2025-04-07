@@ -1,5 +1,5 @@
-# Use the official Node.js image with glibc instead of Alpine
-FROM node:18-slim
+# Use Node.js 18.19.1 specifically (meets the project requirements)
+FROM node:18.19.1-slim
 
 # Set working directory
 WORKDIR /usr/app
@@ -12,10 +12,7 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install pnpm globally
-RUN npm install -g pnpm
-
-# Set environment variables with default values
+# Set default environment variables
 ENV APP_DB="sqlite3://sqlite.db" \
     APP_URL="/" \
     APP_AUTH_JWT_SECRET="default-secret-change-me"
@@ -23,16 +20,20 @@ ENV APP_DB="sqlite3://sqlite.db" \
 # Copy all files from your repository to the container
 COPY . .
 
-# Configure pnpm to use the Node.js version that's already installed
-RUN echo "use-node-version=18.x" > .npmrc
+# Install pnpm with a specific version
+RUN npm install -g pnpm@8.6.0
 
-# Install dependencies using pnpm
-RUN pnpm install
+# Create a .npmrc file to disable node version check
+RUN echo "node-version=18.19.1" > .npmrc && \
+    echo "engine-strict=false" >> .npmrc
 
-# Build the application (if required)
+# Install dependencies using pnpm with specific flags
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
+
+# Build the application
 RUN pnpm build
 
-# Set NocoDB environment variables from the build args
+# Set NocoDB environment variables
 ENV NC_DB=${APP_DB} \
     NC_PUBLIC_URL=${APP_URL} \
     NC_AUTH_JWT_SECRET=${APP_AUTH_JWT_SECRET}
